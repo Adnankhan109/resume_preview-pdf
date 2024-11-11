@@ -4,21 +4,25 @@ import html2pdf from "html2pdf.js";
 import React, { useState } from 'react';
 
 export default function ResumeForm() {
-  // type FormData = {
-  //   name: string;
-  //   email: string;
-  //   phone: string;
-  //   location: string;
-  //   professionalSummary: string;
-  //   profession: string;
-  //   education: string[];
-  //   jobExperience: string;
-  //   skills: string[];
-  //   expertise: string;
-  //   language: string[];
-  //   profileImage: null;
-  //   filename: string;
-  // };
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  type FormData = {
+    name: string;
+    email: string;
+    phone: string;
+    location: string;
+    professionalSummary: string;
+    profession: string;
+    education: string[];
+    jobExperience: string;
+    skills: string[];
+    expertise: string;
+    language: string[];
+    profileImage: null;
+    filename: string;
+  };
+
+ 
+
   
   const [formData, setFormData] = useState({
     name: "",
@@ -36,10 +40,11 @@ export default function ResumeForm() {
     filename: ""
   });
   
-  
+
 
   // PDF generation function
   const generatePDF = () => {
+    
     const element = document.getElementById("resume-content");
     const filename = formData.filename || "resume.pdf";
     const options = {
@@ -74,16 +79,18 @@ export default function ResumeForm() {
 
   // Image handling
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const [imageUrl, setImageUrl] = useState(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData({ ...formData, profileImage: file });
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result as string); // Store the file URL in state
+      };
+      reader.readAsDataURL(file); // Read the image file as a URL
     }
   };
-  
   
   
 
@@ -102,7 +109,7 @@ const [imageUrl, setImageUrl] = useState(null);
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleFileChange}
+                onChange={handleImageChange}
                 className="w-full p-2 border border-gray-300 rounded"
               />
 
@@ -258,9 +265,11 @@ const [imageUrl, setImageUrl] = useState(null);
               <div className="w-full md:w-1/3 p-6 text-white bg-[#163853]">
                 <div className="flex items-center justify-center mb-4">
                   <Image 
-                    src={imageUrl || "default-profile.jpg"}
-                    alt="Profile"
-                    className="w-40 h-40 rounded-full border-4 border-white"
+                     src={imageUrl || "/default-profile.jpg"}  // Default image if no file selected
+                     alt="Profile"
+                     className="w-40 h-40 rounded-full border-4 border-white"
+                     width={40}
+                     height={40}
                   />
                 </div>
                 {/* Contact Information */}
@@ -309,29 +318,27 @@ const [imageUrl, setImageUrl] = useState(null);
               </div>
 
               {/* Right Section */}
-              <div className="w-full md:w-2/3 p-6 bg-white text-black">
-                {/* Profile and Summary */}
-                <div>
-                  <h2 className="text-2xl font-semibold">{formData.name}</h2>
-                  <p className="text-lg">{formData.profession}</p>
-                </div>
-                <div className="mt-6">
-                  <h2 className="text-xl font-semibold">Professional Summary</h2>
-                  <p>{formData.professionalSummary}</p>
-                </div>
-                {/* Expertise Section */}
-                <div className="mt-6">
-                  <h2 className="text-xl font-semibold">Expertise</h2>
-                  <p>{formData.expertise}</p>
-                </div>
-                {/* Experience Section */}
-                <div className="mt-6">
-                  <h2 className="text-xl font-semibold">Job Experience</h2>
-                  <p>{formData.jobExperience}</p>
-                </div>
-                {/* Languages Section */}
-                
-              </div>
+              <div className="bg-white w-full md:w-2/3 p-8 text-[#163853]">
+            <h1 className="text-4xl md:text-5xl font-extrabold mt-8">
+              <span className="text-gray-700">{formData.name || 'Your Name'}</span>
+            </h1>
+            <p className="text-lg mt-2">{formData.profession || 'Your Profession'}</p>
+
+            <h2 className="text-2xl font-semibold mt-14">Professional Summary</h2>
+            <p className="mt-3 text-lg">
+            {formData.professionalSummary || 'Write your professional summary here.'}
+            </p>
+
+            <h2 className="text-2xl font-semibold mt-8">Expertise</h2>
+            <p className="mt-3 text-lg">
+            {formData.expertise || 'Write your expertise here.'}
+            </p>
+
+            <h2 className="text-2xl font-semibold mt-8">Job Experience</h2>
+            <p className="mt-4 text-lg">
+            {formData.jobExperience || 'Job Experience'}
+            </p>
+          </div>
             </div>
           </div>
         </div>
