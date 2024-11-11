@@ -1,9 +1,25 @@
 "use client";
-import { useEffect, useState } from "react";
-import { jsPDF } from "jspdf";
+import Image from 'next/image';
 import html2pdf from "html2pdf.js";
+import React, { useState } from 'react';
 
 export default function ResumeForm() {
+  // type FormData = {
+  //   name: string;
+  //   email: string;
+  //   phone: string;
+  //   location: string;
+  //   professionalSummary: string;
+  //   profession: string;
+  //   education: string[];
+  //   jobExperience: string;
+  //   skills: string[];
+  //   expertise: string;
+  //   language: string[];
+  //   profileImage: null;
+  //   filename: string;
+  // };
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -11,14 +27,16 @@ export default function ResumeForm() {
     location: "",
     professionalSummary: "",
     profession: "",
-    education: [""],
+    education: [] as string[],  // E
     jobExperience: "",
-    skills: [""],
+    skills: [] as string[], 
     expertise: "",
-    language: [""],
-    profileImage: null,
-    filename: "",
+    language: [] as string[],  
+    profileImage: null as File | null,  // Ensure the type is correct here
+    filename: ""
   });
+  
+  
 
   // PDF generation function
   const generatePDF = () => {
@@ -33,32 +51,41 @@ export default function ResumeForm() {
   };
 
   // Handle input changes
-  const handleChange = (e) => {
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
-  // Handle array changes like skills, education, etc.
-  const handleArrayChange = (index, field, value) => {
+  
+  const handleArrayChange = (index: number, field: 'skills' | 'education' | 'language', value: string) => {
     const updatedArray = [...formData[field]];
     updatedArray[index] = value;
     setFormData({ ...formData, [field]: updatedArray });
   };
+  
+  
+  
 
   // Add new fields for skills, education, or language
-  const addField = (field) => {
+  const addField = (field: 'skills' | 'education' | 'language') => {
     setFormData({ ...formData, [field]: [...formData[field], ""] });
   };
+  
 
   // Image handling
-  const [imageUrl, setImageUrl] = useState(null);
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+const [imageUrl, setImageUrl] = useState(null);
+
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       setFormData({ ...formData, profileImage: file });
-      setImageUrl(URL.createObjectURL(file));
     }
   };
+  
+  
+  
 
   // Toggle visibility of skills section
   const [isVisible, setIsVisible] = useState(true);
@@ -230,7 +257,7 @@ export default function ResumeForm() {
               {/* Left Section */}
               <div className="w-full md:w-1/3 p-6 text-white bg-[#163853]">
                 <div className="flex items-center justify-center mb-4">
-                  <img
+                  <Image 
                     src={imageUrl || "default-profile.jpg"}
                     alt="Profile"
                     className="w-40 h-40 rounded-full border-4 border-white"
